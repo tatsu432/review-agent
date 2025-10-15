@@ -22,7 +22,7 @@ def main():
     }
 
     # Build request from prompt template (flexible by location)
-    request = build_restaurant_prompt(location="Shinjuku, Tokyo, Japan", top_n=5)
+    request = build_restaurant_prompt(location="Shinjuku, Tokyo, Japan")
 
     # Stream with cleaner output while capturing inner state
     print("=== Streaming Agent Output ===")

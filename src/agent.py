@@ -7,12 +7,7 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import create_react_agent
 
 from tool import (
-    fetch_page_text,
     google_maps_places,
-    mcp_web_search,
-    normalize_url,
-    select_best_link,
-    web_search,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -27,11 +22,6 @@ def create_agent():
     logger.info("Creating agent")
 
     tools = [
-        # web_search,
-        # mcp_web_search,
-        # fetch_page_text,
-        # normalize_url,
-        # select_best_link,
         google_maps_places,
     ]
 
