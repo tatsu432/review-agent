@@ -19,7 +19,7 @@ For each restaurant, you should provide the following information in the followi
   3. reviews_count: the number of Google reviews
   4. price_range: the price range in JPY and USD of the restaurant
   5. types: the types of the restaurant 
-  6. photo_url: the photo url of the restaurant
+  6. photo_reference: the Google photo_reference token (do not expose API keys)
   7. place_url: the place url of the restaurant
   8. why_special: a list of reasons why the restaurants are special based on the user query and the restaurant information
 """

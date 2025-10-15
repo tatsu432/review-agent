@@ -13,7 +13,7 @@ The tool returns for each place:
 - rating
 - price_level (0-4 as defined by Google)
 - types
-- photo_url
+- photo_reference (use Places Photo endpoint to render; never expose API keys)
 - place_url (maps link)
 
 Example usage inside the agent: the model may call `google_maps_places` with a query such as "ramen near Shinjuku, Tokyo" and use the structured fields for presentation.

@@ -23,7 +23,7 @@ def google_maps_places(
     - radius_meters: optional radius for nearby search when location provided
 
     Output: list of dicts with keys:
-      name, rating, reviews_count, price_level, types, photo_url, place_url
+      name, rating, reviews_count, price_level, types, photo_reference, place_url
 
     Requires environment variable GOOGLE_MAPS_API_KEY.
     """
@@ -37,17 +37,11 @@ def google_maps_places(
 
     logger.info("session is set")
 
-    def _build_photo_url(photo_ref: str) -> str:
-        if not photo_ref:
-            logger.warning("photo_ref is not set")
+    def _first_photo_reference(photos: list) -> str:
+        if not photos:
             return ""
-        logger.info("photo_ref is set")
-        return (
-            "https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference="
-            + photo_ref
-            + "&key="
-            + api_key
-        )
+        ref = photos[0].get("photo_reference") or ""
+        return ref
 
     # We'll keep internal mapping to place_id for optional enrichment
     results_with_ids: List[Dict] = []
@@ -74,10 +68,9 @@ def google_maps_places(
             price_level = item.get("price_level")
             types = item.get("types") or []
             photos = item.get("photos") or []
-            photo_ref = photos[0].get("photo_reference") if photos else ""
-            photo_url = _build_photo_url(photo_ref)
+            photo_ref = _first_photo_reference(photos)
             place_url = (
-                f"https://www.google.com/maps/place/?q=place_id:{place_id}"
+                f"https://www.google.com/maps/search/?api=1&query_place_id={place_id}"
                 if place_id
                 else ""
             )
@@ -92,7 +85,7 @@ def google_maps_places(
                         "reviews_count": reviews_count,
                         "price_level": price_level,
                         "types": types,
-                        "photo_url": photo_url,
+                        "photo_reference": photo_ref,
                         "place_url": place_url,
                     }
                 )
@@ -113,6 +106,8 @@ def google_maps_places(
                 fields.append("price_level")
             if need_reviews:
                 fields.append("user_ratings_total")
+            # Also request canonical Maps URL if enriching
+            fields.append("url")
             if not fields:
                 continue
             details_params = {
@@ -132,6 +127,9 @@ def google_maps_places(
                     r["price_level"] = result.get("price_level")
                 if need_reviews and result.get("user_ratings_total") is not None:
                     r["reviews_count"] = result.get("user_ratings_total")
+                # Prefer canonical place URL if Google returns it
+                if result.get("url"):
+                    r["place_url"] = result.get("url")
             except Exception:
                 # Skip enrichment for this place on error
                 logger.warning("Failed to enrich results via Google Maps Places API")
