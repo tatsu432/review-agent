@@ -1,5 +1,10 @@
 ### AL ###
 #Template for AL projects for Dynamics 365 Business Central
+*.env
+*__pycache__/
+*.python-version 
+*.csv
+*.DS_Store
 #launch.json folder
 .vscode/
 #Cache folder
