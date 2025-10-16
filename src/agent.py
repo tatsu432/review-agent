@@ -4,7 +4,7 @@ from typing import Annotated, TypedDict
 from langchain.chat_models import init_chat_model
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph.message import add_messages
-from langgraph.prebuilt import create_react_agent
+from langgraph.prebuilt import create_react_agent, ReactAgent
 
 from tool import (
     google_maps_places,
@@ -18,7 +18,7 @@ class State(TypedDict):
     messages: Annotated[list, add_messages]
 
 
-def create_agent():
+def create_agent() -> ReactAgent:
     logger.info("Creating agent")
 
     tools = [

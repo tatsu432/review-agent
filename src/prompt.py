@@ -1,4 +1,5 @@
 # Prompt template to generalize restaurant recommendation queries
+from langchain_core.messages import BaseMessage
 from langchain_core.prompts import ChatPromptTemplate
 
 SYSTEM_PROMPT = """
@@ -34,7 +35,7 @@ RESTAURANT_PROMPT = ChatPromptTemplate.from_messages(
 )
 
 
-def build_restaurant_prompt(location: str):
+def build_restaurant_prompt(location: str) -> dict[str, list[BaseMessage]]:
     """Builds a message list from the prompt template for the agent to process."""
     formatted = RESTAURANT_PROMPT.format_messages(location=location)
     return {"messages": formatted}
