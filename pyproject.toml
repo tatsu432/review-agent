@@ -17,4 +17,6 @@ dependencies = [
     "rich>=14.2.0",
     "fastmcp>=2.12.4",
     "langchain-mcp-adapters>=0.1.11",
+    "fastapi>=0.119.0",
+    "line-bot-sdk>=3.19.1",
 ]

@@ -2,6 +2,7 @@
 #Template for AL projects for Dynamics 365 Business Central
 *.ipynb
 *.env
+*.sh
 *__pycache__/
 *.python-version 
 *.csv

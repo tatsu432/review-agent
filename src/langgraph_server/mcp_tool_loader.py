@@ -6,14 +6,13 @@ from contextlib import asynccontextmanager
 from datetime import timedelta
 from typing import TypedDict
 
+from helpers import is_transient
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_mcp_adapters.sessions import SSEConnection, StreamableHttpConnection
 from langsmith import traceable
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
-
-from helpers import is_transient
 from setting import get_settings
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -50,7 +49,9 @@ class MCPToolLoader:
             "url": settings.review_agent_mcp_server_url,
             "headers": self.get_default_headers(),
             "timeout": timedelta(seconds=settings.mcp_server_connection.timeout),
-            "sse_read_timeout": timedelta(seconds=settings.mcp_server_connection.sse_read_timeout),
+            "sse_read_timeout": timedelta(
+                seconds=settings.mcp_server_connection.sse_read_timeout
+            ),
             "terminate_on_close": settings.mcp_server_connection.terminate_on_close,
         }
 
@@ -69,7 +70,9 @@ class MCPToolLoader:
         retry=retry_if_exception(is_transient),
         reraise=True,
     )
-    async def _load_one_server_with_retry(self, name: str, conn: dict) -> list[BaseTool]:
+    async def _load_one_server_with_retry(
+        self, name: str, conn: dict
+    ) -> list[BaseTool]:
         return await self._load_one_server(name, conn)
 
     async def _load_all_servers(self) -> list[BaseTool]:
@@ -93,7 +96,9 @@ class MCPToolLoader:
         )
         for name, tools, err in batches:
             if err:
-                logger.error("MCP server %s FAILED during initialize/get_tools: %r", name, err)
+                logger.error(
+                    "MCP server %s FAILED during initialize/get_tools: %r", name, err
+                )
             else:
                 results.extend(tools)
 
