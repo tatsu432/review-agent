@@ -2,40 +2,40 @@ import logging
 import os
 from typing import Dict, List
 
+from dotenv import load_dotenv
+
+load_dotenv()  # This loads the .env file
+
 import requests
-from langchain_core.tools import tool
+from fastmcp import FastMCP
+from schema import GoogleMapsPlacesOutput
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+google_maps_places_mcp = FastMCP("google_maps_places_mcp")
 
-@tool
+
+@google_maps_places_mcp.tool(
+    name="google_maps_places",
+    description="Search restaurants via Google Maps Places API and return structured data.",
+)
 def google_maps_places(
     query: str,
     location: str | None = None,
     radius_meters: int | None = 2000,
-) -> list:
+) -> list[GoogleMapsPlacesOutput]:
     """Search restaurants via Google Maps Places API and return structured data.
 
     Inputs:
-    - query: search text (e.g., "sushi", "ramen", or restaurant name)
-    - location: optional "lat,lng" center; if omitted, text search relies on query context
-    - radius_meters: optional radius for nearby search when location provided
+    - query: The search query (e.g., "best sushi")
+    - location: Optional lat,lng or place text to bias results
+    - radius_meters: Optional radius in meters when location provided
 
-    Output: list of dicts with keys:
-      name, rating, reviews_count, price_level, types, photo_reference, place_url
-
-    Requires environment variable GOOGLE_MAPS_API_KEY.
     """
     api_key = os.getenv("GOOGLE_MAPS_API_KEY")
     if not api_key:
-        logger.error("GOOGLE_MAPS_API_KEY is not set")
         raise Exception("GOOGLE_MAPS_API_KEY is not set")
-    logger.info("GOOGLE_MAPS_API_KEY is set")
-
-    session = requests.Session()
-
-    logger.info("session is set")
 
     def _first_photo_reference(photos: list) -> str:
         if not photos:
@@ -54,7 +54,7 @@ def google_maps_places(
             if radius_meters:
                 params["radius"] = radius_meters
 
-        resp = session.get(
+        resp = requests.get(
             "https://maps.googleapis.com/maps/api/place/textsearch/json",
             params=params,
             timeout=15,
@@ -116,7 +116,7 @@ def google_maps_places(
                 "key": api_key,
             }
             try:
-                dresp = session.get(
+                dresp = requests.get(
                     "https://maps.googleapis.com/maps/api/place/details/json",
                     params=details_params,
                     timeout=15,
