@@ -35,3 +35,38 @@ class GoogleMapsPlacesOutput(BaseModel):
     place_url: Optional[str] = Field(
         default=None, description="The place url of the restaurant"
     )
+
+
+class YelpReviewInput(BaseModel):
+    restaurant_name: str = Field(
+        description="The name of the restaurant to search for on Yelp"
+    )
+    location: Optional[str] = Field(
+        description="The location to search for the restaurant on Yelp",
+        default=None,
+    )
+
+
+class YelpReview(BaseModel):
+    text: str = Field(description="The review text")
+    rating: int = Field(description="The rating given by the reviewer (1-5)")
+    user_name: str = Field(description="The name of the reviewer")
+    time_created: str = Field(description="When the review was created")
+    url: Optional[str] = Field(default=None, description="URL to the review on Yelp")
+
+
+class YelpBusinessOutput(BaseModel):
+    name: str = Field(description="The name of the restaurant")
+    yelp_rating: Optional[float] = Field(
+        default=None, description="The Yelp rating of the restaurant"
+    )
+    yelp_review_count: Optional[int] = Field(
+        default=None, description="The number of Yelp reviews"
+    )
+    yelp_url: Optional[str] = Field(
+        default=None, description="The Yelp URL of the restaurant"
+    )
+    reviews: list[YelpReview] = Field(
+        default_factory=list,
+        description="Note: Individual reviews are not available through Yelp API",
+    )

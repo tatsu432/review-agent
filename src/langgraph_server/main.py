@@ -22,8 +22,19 @@ async def main() -> None:
         "recursion_limit": 25,
     }
 
-    # Build request from prompt template (flexible by location)
-    request = build_restaurant_prompt(location="Shinjuku, Tokyo, Japan")
+    # # Build request from prompt template (flexible by location, preferences, and language)
+    # request = build_restaurant_prompt(
+    #     location="Shinjuku, Tokyo, Japan",
+    #     preferences="Japanese cuisine, good value for money, and authentic local experience",
+    #     language="en",  # Can be "en" for English or "jp" for Japanese
+    # )
+
+    # Build request from prompt template (flexible by location, preferences, and language)
+    request = build_restaurant_prompt(
+        location="新宿",
+        preferences="日本料理, 良いコストパフォーマンス",
+        language="jp",  # Can be "en" for English or "jp" for Japanese
+    )
 
     # Stream with cleaner output while capturing inner state
     print("=== Streaming Agent Output ===")
