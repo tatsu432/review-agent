@@ -2,9 +2,9 @@ import asyncio
 import logging
 
 from fastmcp import FastMCP
-
-from settings import get_settings
 from google_maps import google_maps_places_mcp
+from settings import get_settings
+from yelp import yelp_mcp
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,6 +18,7 @@ def get_mcp_servers() -> list[FastMCP]:
     """Get the MCP servers."""
     return [
         google_maps_places_mcp,
+        yelp_mcp,
     ]
 
 
@@ -30,8 +31,8 @@ async def import_mcp_servers() -> None:
             logger.info(f"Successfully imported server: {server.name}")
         except Exception as e:
             logger.error(f"Failed to import server {server.name}: {e}")
-            raise 
-        
+            raise
+
     logger.info(f"Successfully configured MCP with {len(servers)} servers")
 
 

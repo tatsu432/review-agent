@@ -23,7 +23,7 @@ async def create_agent() -> StateGraph:
         mcp_tool_loader = MCPToolLoader()
         async with mcp_tool_loader.get_mcp_tools() as mcp_tools:
             llm_model = init_chat_model(
-                model="gpt-4o-mini",
+                model="gpt-5-mini",
                 model_provider="openai",
                 temperature=0.1,
             )

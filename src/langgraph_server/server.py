@@ -1,5 +1,6 @@
 import logging
 import os
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 
@@ -8,24 +9,28 @@ load_dotenv()  # This loads the .env file
 from agent import create_agent
 from fastapi import FastAPI, Request
 from langchain_core.messages import HumanMessage
-from linebot import LineBotApi, WebhookParser
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.v3 import WebhookParser
+from linebot.v3.messaging import ApiClient, Configuration, MessagingApi, ReplyMessageRequest
+from linebot.v3.messaging.models import TextMessage as V3TextMessage
+from linebot.v3.webhooks import MessageEvent, TextMessageContent
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+# Initialize Line Bot v3 API
+configuration = Configuration(access_token=os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+api_client = ApiClient(configuration)
+line_bot_api = MessagingApi(api_client)
 parser = WebhookParser(os.getenv("LINE_CHANNEL_SECRET"))
 
 
-# --- FastAPI app ---
-app = FastAPI()
-
+# Global agent variable
 agent = None
 
 
-@app.on_event("startup")
-async def startup() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
     global agent
     try:
         agent = await create_agent()
@@ -36,6 +41,15 @@ async def startup() -> None:
             "Make sure the MCP server is running at the URL specified in REVIEW_AGENT_MCP_SERVER_URL"
         )
         raise
+    
+    yield
+    
+    # Shutdown (cleanup if needed)
+    pass
+
+
+# --- FastAPI app ---
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/health")
@@ -53,7 +67,7 @@ async def callback(request: Request):
     events = parser.parse(body.decode("utf-8"), signature)
 
     for event in events:
-        if isinstance(event, MessageEvent) and isinstance(event.message, TextMessage):
+        if isinstance(event, MessageEvent) and isinstance(event.message, TextMessageContent):
             user_message = event.message.text
 
             # make a stable thread id
@@ -73,8 +87,22 @@ async def callback(request: Request):
             )
 
             reply_text = result["messages"][-1].content
+            reply_message = V3TextMessage(text=reply_text)
             line_bot_api.reply_message(
-                event.reply_token, TextSendMessage(text=reply_text)
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[reply_message]
+                )
             )
 
     return "OK"
+
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    port = int(os.getenv("PORT", "8000"))
+    host = os.getenv("HOST", "0.0.0.0")
+    
+    print(f"Starting server on {host}:{port}")
+    uvicorn.run(app, host=host, port=port)
