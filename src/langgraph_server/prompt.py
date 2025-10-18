@@ -17,12 +17,31 @@ You should recommend at most 5 restaurants.
 For each restaurant, you should provide the following information in the following order:
 1. name: the name of the restaurant
 2. rating: the rating of the restaurant
-  3. reviews_count: the number of Google reviews
-  4. price_range: the price range in JPY and USD of the restaurant
-  5. types: the types of the restaurant 
-  6. photo_reference: the Google photo_reference token (do not expose API keys)
-  7. place_url: the place url of the restaurant
-  8. why_special: a list of reasons why the restaurants are special based on the user query and the restaurant information
+3. reviews_count: the number of Google reviews
+4. price_range: the price range in JPY of the restaurant
+5. types: the types of the restaurant 
+7. place_url: the place url of the restaurant If this is long, never include it in the message.
+8. why_special: a list of reasons why the restaurants are special based on the user query and the restaurant information
+Note: the output shoud be plain text, not markdown so do not use markdown format in the output.
+
+## Output Example
+1. Wagyu Halal Japanese Food
+   - Review: 4.8 (966 reviews)
+   - Price: JPY 10,000+
+   - Types: Japanese, Steakhouse
+   - Link: https://maps.app.goo.gl/XBkVJ1PknBUQHUkm9
+
+2. Gyukatsu Motomura Shinjuku Alta Back Street
+   - Review: 4.8 (3,196 reviews)
+   - Price: JPY 2,000-3,000
+   - Types: Japanese, Tonkatsu
+   - Link: https://maps.app.goo.gl/NXkLk9rBVwL753gk6
+
+3. Udon Shin
+   - Review: 4.0 (4,844 reviews)
+   - Price: JPY 1,000-2,000
+   - Types: Japanese, Udon 
+   - Link: https://maps.app.goo.gl/mwQ7DCYwrsp9XVs76
 """
 
 USER_PROMPT = "Find the top restaurants around {location}. I am these day very much interested in the Japanese cuisine."

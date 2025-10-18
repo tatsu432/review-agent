@@ -7,6 +7,7 @@ from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import create_react_agent
 from mcp_tool_loader import MCPToolLoader
+from prompt import SYSTEM_PROMPT
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,7 +33,10 @@ async def create_agent() -> StateGraph:
             logger.info("Memory created")
 
             graph = create_react_agent(
-                model=llm_model, tools=mcp_tools, checkpointer=memory
+                model=llm_model,
+                tools=mcp_tools,
+                checkpointer=memory,
+                prompt=SYSTEM_PROMPT,
             )
             logger.info("Graph created")
 

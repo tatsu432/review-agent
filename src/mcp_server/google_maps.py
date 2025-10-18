@@ -85,7 +85,7 @@ def google_maps_places(
                         "reviews_count": reviews_count,
                         "price_level": price_level,
                         "types": types,
-                        "photo_reference": photo_ref,
+                        # "photo_reference": photo_ref,
                         "place_url": place_url,
                     }
                 )

@@ -10,7 +10,8 @@ from helpers import is_transient
 from langchain_core.tools import BaseTool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_mcp_adapters.sessions import SSEConnection, StreamableHttpConnection
-from langsmith import traceable
+
+# from langsmith import traceable
 from setting import get_settings
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
@@ -106,16 +107,16 @@ class MCPToolLoader:
             raise RuntimeError("All MCP servers failed to initialize; see logs above.")
         return results
 
-    @traceable(
-        name="get_mcp_tools",
-        run_type="tool",
-        tags=["tool", settings.environment],
-        metadata={
-            "run_type": "tool",
-            "name": "get_mcp_tools",
-            "environment": settings.environment,
-        },
-    )
+    # @traceable(
+    #     name="get_mcp_tools",
+    #     run_type="tool",
+    #     tags=["tool", settings.environment],
+    #     metadata={
+    #         "run_type": "tool",
+    #         "name": "get_mcp_tools",
+    #         "environment": settings.environment,
+    #     },
+    # )
     @asynccontextmanager
     async def get_mcp_tools(self) -> AsyncGenerator[list[BaseTool], None]:
         """
