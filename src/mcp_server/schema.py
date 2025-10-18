@@ -4,9 +4,15 @@ from pydantic import BaseModel, Field
 
 
 class GoogleMapsPlacesInput(BaseModel):
-    query: str = Field(description="The query to search for restaurants")
-    location: Optional[str] = Field(default=None)
-    radius_meters: Optional[int] = Field(default=2000)
+    query: str = Field(description="The query to search for restaurants on Google Maps")
+    location: Optional[str] = Field(
+        description="The location to search for restaurants on Google Maps",
+        default=None,
+    )
+    radius_meters: Optional[int] = Field(
+        description="The radius in meters to search for restaurants on Google Maps",
+        default=2000,
+    )
 
 
 class GoogleMapsPlacesOutput(BaseModel):
