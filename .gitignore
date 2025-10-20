@@ -27,3 +27,4 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+*pgdata/*
