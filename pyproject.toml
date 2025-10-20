@@ -19,4 +19,5 @@ dependencies = [
     "langchain-mcp-adapters>=0.1.11",
     "fastapi>=0.119.0",
     "line-bot-sdk>=3.19.1",
+    "pandas>=2.3.3",
 ]
