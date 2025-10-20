@@ -20,4 +20,9 @@ dependencies = [
     "fastapi>=0.119.0",
     "line-bot-sdk>=3.19.1",
     "pandas>=2.3.3",
+    "psycopg>=3.2.11",
+    "sentence-transformers>=5.1.1",
+    "python-dateutil>=2.9.0.post0",
+    "unidecode>=1.4.0",
+    "numpy>=2.3.3",
 ]

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, Field
 
@@ -69,4 +69,61 @@ class YelpBusinessOutput(BaseModel):
     reviews: list[YelpReview] = Field(
         default_factory=list,
         description="Note: Individual reviews are not available through Yelp API",
+    )
+
+
+class TaberoguSearchInput(BaseModel):
+    query: str = Field(description="The query to search for restaurants on Taberogu")
+    ward: Optional[str] = Field(
+        description="The ward to search for restaurants on Taberogu",
+        default=None,
+    )
+    max_dinner_budget: Optional[int] = Field(
+        description="The maximum dinner budget to search for restaurants on Taberogu",
+        default=None,
+    )
+    smoking: Optional[str] = Field(
+        description="The smoking policy to search for restaurants on Taberogu",
+        default=None,
+    )
+    with_children: Optional[bool] = Field(
+        description="Whether to search for restaurants that allow children on Taberogu",
+        default=None,
+    )
+    category_hint: Optional[str] = Field(
+        description="The category hint to search for restaurants on Taberogu",
+        default=None,
+    )
+    k: int = Field(description="The number of restaurants to return", default=10)
+
+
+class TaberoguSearchOutput(BaseModel):
+    status: str = Field(description="The status of the search")
+    results: list[Dict[str, Any]] = Field(
+        description="The results of the search",
+        default_factory=list,
+    )
+    retryable: bool = Field(
+        description="Whether the search can be retried", default=False
+    )
+
+
+class TaberoguNameLookupInput(BaseModel):
+    name: str = Field(description="Restaurant name to retrieve from Taberogu DB")
+    min_score: float = Field(
+        description="Minimum semantic similarity (0-1) required to accept the match",
+        default=0.75,
+        ge=0.0,
+        le=1.0,
+    )
+
+
+class TaberoguNameLookupOutput(BaseModel):
+    status: str = Field(description="The status of the lookup")
+    restaurant: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Restaurant record if match exceeds min_score; otherwise None",
+    )
+    retryable: bool = Field(
+        description="Whether the request can be retried", default=False
     )
