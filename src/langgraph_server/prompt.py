@@ -40,7 +40,7 @@ For each restaurant, you should provide the following information in the followi
 4. google_reviews_count: the number of Google reviews
 5. yelp_rating: the Yelp rating of the restaurant (if available; only include if returned by tool)
 6. yelp_reviews_count: the number of Yelp reviews (if available; only include if returned by tool)
-7. price_range: the price range in JPY of the restaurant
+7. price_range: the price range in JPY of the restaurant if you cannot find the information from google but if you find one from Taberogu then you might also want to distinguish the price range between dinner and lunch and display both if available.
 8. categories: the categories of the restaurant such as Japanese, Steakhouse, Tonkatsu, etc.
 9. place_url: the Google Maps URL of the restaurant (if long, never include it in the message)
 10. yelp_url: the Yelp URL of the restaurant (if available; only include if returned by tool)
