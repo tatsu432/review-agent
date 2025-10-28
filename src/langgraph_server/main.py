@@ -31,7 +31,7 @@ async def main() -> None:
 
     # Build request from prompt template (flexible by location, preferences, and language)
     request = build_restaurant_prompt(
-        location="新宿",
+        location="九段下",
         preferences="日本料理",
         language="jp",  # Can be "en" for English or "jp" for Japanese
     )

@@ -28,3 +28,5 @@ rad.json
 #Test results file
 TestResults.xml
 *pgdata/*
+*Taberogu_dataset/*
+*.xlsx
