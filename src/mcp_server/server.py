@@ -4,8 +4,10 @@ import logging
 from fastmcp import FastMCP
 from google_maps import google_maps_places_mcp
 from settings import get_settings
-from yelp import yelp_mcp
+from standarize_review import standarize_review_mcp
 from taberogu import taberogu_mcp
+from yelp import yelp_mcp
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,7 @@ def get_mcp_servers() -> list[FastMCP]:
         google_maps_places_mcp,
         yelp_mcp,
         taberogu_mcp,
+        standarize_review_mcp,
     ]
 
 
