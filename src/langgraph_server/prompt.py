@@ -28,58 +28,65 @@ You should follow the following steps to recommend the restaurants:
 - yelp_business_search: Get Yelp business information for a specific restaurant (ratings, review counts, business URL)
 - yelp_enhance_google_maps_results: Batch enhance multiple restaurants with Yelp business data
 - taberogu_get_by_name: Retrieve Taberogu record by restaurant name (includes rating and review count when confidently matched)
+- compute_standarized_review_score: Compute a single review metric from Google, Tabelog, and Yelp by taking a weighted sum of standardized scores (z-scores), where weights are proportional to review counts. The final score is then mapped back to a 1-5 scale via 3.5 + 0.5 * z_avg.
 
 # Output
 ## Output Content
 You should recommend at most 5 restaurants.
 For each restaurant, you should provide the following information in the following order:
 1. name: the name of the restaurant
-2. google_rating: the Google Maps rating of the restaurant
-3. google_reviews_count: the number of Google reviews
-4. yelp_rating: the Yelp rating of the restaurant (if available; only include if returned by tool)
-5. yelp_reviews_count: the number of Yelp reviews (if available; only include if returned by tool)
-6. price_range: the price range in JPY of the restaurant
-7. types: the types of the restaurant
-8. place_url: the Google Maps URL of the restaurant (if long, never include it in the message)
-9. yelp_url: the Yelp URL of the restaurant (if available; only include if returned by tool)
-10. taberogu_rating: the Taberogu rating (if available; only include if returned by tool)
-11. taberogu_reviews_count: the number of Taberogu reviews (if available; only include if returned by tool)
+2. standarized_review_score: the overall standarized review score of the restaurant
+3. google_rating: the Google Maps rating of the restaurant
+4. google_reviews_count: the number of Google reviews
+5. yelp_rating: the Yelp rating of the restaurant (if available; only include if returned by tool)
+6. yelp_reviews_count: the number of Yelp reviews (if available; only include if returned by tool)
+7. price_range: the price range in JPY of the restaurant
+8. categories: the categories of the restaurant such as Japanese, Steakhouse, Tonkatsu, etc.
+9. place_url: the Google Maps URL of the restaurant (if long, never include it in the message)
+10. yelp_url: the Yelp URL of the restaurant (if available; only include if returned by tool)
+11. taberogu_rating: the Taberogu rating (if available; only include if returned by tool)
+12. taberogu_reviews_count: the number of Taberogu reviews (if available; only include if returned by tool)
+The order of the recommended restaurants should be based on the standarized_review_score in descending order.
 
 ## Output Example (日本語)
 1. 和牛ハラル日本料理
+   - 総合評価: 4.5
    - Google評価: 4.8 (966件)
    - 食べログ評価: 4.5 (89件)
    - Yelp評価: 4.5 (89件)
    - 価格: 10,000円以上
-   - ジャンル: 日本料理、ステーキハウス
+   - カテゴリ: 日本料理、ステーキハウス
    - Googleマップ: https://maps.google.com/?cid=8415061637662681599
    - Yelp: https://yelp.com/biz/wagyu-halal-japanese-food
 
 2. 牛かつもと村 新宿アルタ裏通り店
+   - 総合評価: 4.3
    - Google評価: 4.8 (3,196件)
    - 食べログ評価: 4.2 (156件)
    - Yelp評価: 4.2 (156件)
    - 価格: 2,000円-3,000円
-   - ジャンル: 日本料理、とんかつ
+   - カテゴリ: 日本料理、とんかつ
    - Googleマップ: https://maps.google.com/?cid=12772805383110518329
    - Yelp: https://yelp.com/biz/gyukatsu-motomura-shinjuku
 
 ## Output Example (English)
 1. Wagyu Halal Japanese Food
+   - Overall Rating: 4.5
    - Google Rating: 4.8 (966 reviews)
    - Yelp Rating: 4.5 (89 reviews)
    - Taberogu Rating: 4.5 (89 reviews)
    - Price: JPY 10,000+
-   - Types: Japanese, Steakhouse
+   - Categories: Japanese, Steakhouse
    - Google Maps: https://maps.google.com/?cid=8415061637662681599
    - Yelp: https://yelp.com/biz/wagyu-halal-japanese-food
 
 2. Gyukatsu Motomura Shinjuku Alta Back Street
+   - Overall Rating: 4.3
    - Google Rating: 4.8 (3,196 reviews)
    - Yelp Rating: 4.2 (156 reviews)
    - Taberogu Rating: 4.2 (156 reviews)
    - Price: JPY 2,000-3,000
-   - Types: Japanese, Tonkatsu
+   - Categories: Japanese, Tonkatsu
    - Google Maps: https://maps.google.com/?cid=12772805383110518329
    - Yelp: https://yelp.com/biz/gyukatsu-motomura-shinjuku
 
@@ -95,7 +102,9 @@ For each restaurant, you should provide the following information in the followi
 
 USER_PROMPT_EN = "Find the restaurants around {location} with good ratings based on my preferences: {preferences}. "
 
-USER_PROMPT_JP = "{location}周辺で、評価の良いレストランを見つけてください: {preferences}。"
+USER_PROMPT_JP = (
+    "{location}周辺で、評価の良いレストランを見つけてください: {preferences}。"
+)
 
 
 def create_restaurant_prompt(language: str = "en") -> ChatPromptTemplate:
