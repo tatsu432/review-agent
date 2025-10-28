@@ -30,3 +30,4 @@ TestResults.xml
 *pgdata/*
 *Taberogu_dataset/*
 *.xlsx
+!src/data/postgre.ipynb

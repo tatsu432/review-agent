@@ -52,6 +52,7 @@ def search_restaurants(
         WITH filt AS (
           SELECT r.restaurant_id, r.name, r.page_url, r.star_rating, r.review_count,
                  r.categories, r.seats, r.smoking, r.with_children, r.ward, r.area_hint,
+                 r.budget_dinner_min, r.budget_dinner_max, r.budget_lunch_min, r.budget_lunch_max,
                  r.retrieval_text_ja,
                  -- quick category filter (ILIKE) if hint present
                  CASE WHEN %(category_hint)s IS NOT NULL THEN
@@ -111,6 +112,18 @@ def search_restaurants(
                         if rec["review_count"] is not None
                         else None,
                         "categories": rec["categories"],
+                        "budget_dinner_min": int(rec["budget_dinner_min"])
+                        if rec.get("budget_dinner_min") is not None
+                        else None,
+                        "budget_dinner_max": int(rec["budget_dinner_max"])
+                        if rec.get("budget_dinner_max") is not None
+                        else None,
+                        "budget_lunch_min": int(rec["budget_lunch_min"])
+                        if rec.get("budget_lunch_min") is not None
+                        else None,
+                        "budget_lunch_max": int(rec["budget_lunch_max"])
+                        if rec.get("budget_lunch_max") is not None
+                        else None,
                         "score_semantic": float(rec["vec_score"] or 0.0),
                         "score_goodness": float(g),
                         "explain": "・".join(expl_bits)
@@ -136,6 +149,7 @@ def get_restaurant_by_name(name: str, min_score: float = 0.75) -> Dict[str, Any]
         sql = """
         SELECT r.restaurant_id, r.name, r.page_url, r.star_rating, r.review_count,
                r.categories, r.address, r.ward, r.area_hint,
+               r.budget_dinner_min, r.budget_dinner_max, r.budget_lunch_min, r.budget_lunch_max,
                1 - (v.embedding <=> %(qvec)s::vector) AS vec_score
         FROM restaurants r
         JOIN restaurant_vectors v USING (restaurant_id)
@@ -158,6 +172,10 @@ def get_restaurant_by_name(name: str, min_score: float = 0.75) -> Dict[str, Any]
                 address,
                 ward,
                 area_hint,
+                budget_dinner_min,
+                budget_dinner_max,
+                budget_lunch_min,
+                budget_lunch_max,
                 vec_score,
             ) = row
 
@@ -175,6 +193,18 @@ def get_restaurant_by_name(name: str, min_score: float = 0.75) -> Dict[str, Any]
                 "address": address,
                 "ward": ward,
                 "area_hint": area_hint,
+                "budget_dinner_min": int(budget_dinner_min)
+                if budget_dinner_min is not None
+                else None,
+                "budget_dinner_max": int(budget_dinner_max)
+                if budget_dinner_max is not None
+                else None,
+                "budget_lunch_min": int(budget_lunch_min)
+                if budget_lunch_min is not None
+                else None,
+                "budget_lunch_max": int(budget_lunch_max)
+                if budget_lunch_max is not None
+                else None,
                 "score_semantic": score,
             }
             return {"status": "ok", "restaurant": restaurant, "retryable": False}
